@@ -1,0 +1,78 @@
+clc
+clear all
+% no of iteration 
+max_iteration =100;
+
+% population size
+Population = 100;
+
+% Swarm initial position
+lower_bound=0;
+upper_bound=10;
+% along  x axis point
+x= lower_bound+ (upper_bound-lower_bound)*rand();
+% along  y axis point
+y= lower_bound+ (upper_bound-lower_bound)*rand();
+
+% Assigning each fruit fly initial direction and distance
+fly_x_position= zeros(Population,1);
+fly_y_position= zeros(Population,1);
+Distance_of_fly_from_origin = zeros(Population,1);
+Smell_concentration = zeros(Population,1);
+Smell= zeros(Population,1);
+for i= 1:Population
+    fly_x_position(i)= x+ (rand()-0.5);
+    fly_y_position(i)= y+ (rand()-0.5);
+    Distance_of_fly_from_origin(i)= sqrt(fly_x_position(i)*fly_x_position(i)+fly_y_position(i)*fly_y_position(i));
+    Smell_concentration(i)= 1/Distance_of_fly_from_origin(i);
+    Smell(i)= Optimal(Smell_concentration(i));
+    
+end
+[best_smell, best_smell_index] = max(Smell);
+Smell_best= best_smell;
+x=fly_x_position(best_smell_index);
+y=fly_y_position(best_smell_index);
+Swarm_X_position= zeros(max_iteration,1);
+Swarm_Y_position= zeros(max_iteration,1);
+for k=1:max_iteration
+    for j=1:Population
+        fly_x_position(j)= x + (rand()-0.5);
+        fly_y_position(j)= y + (rand()-0.5);
+        Distance_of_fly_from_origin(j)= sqrt(fly_x_position(j)*fly_x_position(j)+fly_y_position(j)*fly_y_position(j));
+        Smell_concentration(j)= 1/Distance_of_fly_from_origin(j);
+        Smell(j)= Optimal(Smell_concentration(j));
+    end
+        [best_smell, best_smell_index] = max(Smell);
+        if best_smell > Smell_best
+            Smell_best= best_smell;
+            x= fly_x_position(best_smell_index);
+            y= fly_y_position(best_smell_index);
+        end
+        
+        
+%  best of each generation
+
+yy(k)=Smell_best;
+Xbest(k)=x;
+Ybest(k)=y;
+     
+            
+        
+  
+end
+figure(1)
+plot(yy)
+grid  on;
+title('Optimization process X^2','fontsize',14)
+xlabel('Iteration Number','fontsize',12);ylabel('Smell','fontsize',14);
+
+figure(2)
+plot(Xbest,Ybest,'b.');
+grid on;
+title('Fruit fly flying route X^2','fontsize',14)
+xlabel('X-axis','fontsize',12);ylabel('Y-axis','fontsize',12);
+pause(0.5)
+
+function out = Optimal(input)
+out= input*input-100;
+end
